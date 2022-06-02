@@ -1,23 +1,25 @@
 import express from 'express'
-import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
+import mongoose from 'mongoose'
 import cors from 'cors'
-import router from './routes/posts.js'
+import dotenv from 'dotenv'
+import router from './routes.js/post.js'
+import userRouter from './routes.js/user.js'
 
 const app = express()
 
+app.use(bodyParser.json( { limit: '30mb', extended: true} ));
+app.use(bodyParser.urlencoded( { limit: '30mb', extended: true} ));
 
-
-app.use(bodyParser.json({ limit: '30mb', extended: true }))
-app.use(bodyParser.urlencoded({ limit: '30mb', extended:true }))
+dotenv.config()
 
 app.use(cors())
 
-app.use('/posts', router)
+app.use('/post', router)
+app.use('/user', userRouter)
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000 
 
-const MONGO_URL='mongodb+srv://ibeenoch:enoch@cluster0.nsfhj.mongodb.net/freecodecamp?retryWrites=true&w=majority'
-
-mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true }).then(()=> app.listen(PORT, ()=> console.log(`app is listening on port: ${PORT}`))).catch((error) => console.log(error.message))
-
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true})
+.then(() => app.listen(PORT, () => console.log(`app listening at port ${PORT}`)))
+.catch((error) => error.message)
